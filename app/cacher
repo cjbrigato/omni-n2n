@@ -1,4 +1,4 @@
 #!/bin/bash
 
 cd /cache/
-busybox httpd -f -p 8080
+/httpd -f -p 8080

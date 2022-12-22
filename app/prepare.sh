@@ -1,7 +1,7 @@
 #!/bin/sh
 set -e
 #########################
-apk add --no-cache gcc make autoconf automake bash vim file musl-dev musl-utils linux-headers wget busybox
+apk add --no-cache gcc make autoconf automake bash vim file musl-dev musl-utils linux-headers wget 
 mkdir -p /cache
 
 echo "Refreshing cache..."
