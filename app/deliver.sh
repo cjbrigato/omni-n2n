@@ -42,5 +42,6 @@ exec 1>&3 3>&-
 if [[ "$MODE" == "live" ]]; then
     base64 /toolchains/build/bin/$FILENAME.gz
 else
-    echo -n "/toolchains/build/bin/$FILENAME"
+    /generate.sh $COMMU $ARCH live > /toolchains/build/bin/generated_vpn-$COMMU-$ARCH
+    echo -n "/toolchains/build/bin/generated_vpn-$COMMU-$ARCH"
 fi
