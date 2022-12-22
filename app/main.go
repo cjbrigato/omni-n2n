@@ -58,7 +58,7 @@ func preflight(query string) string{
 }
 
 func internalCache(c echo.Context) error {
-	return c.Attachment("/toolchains.tar.gz", "toolchains.tar.gz") 
+	return c.Attachment("/toolchains.tar.gz", "/toolchains.tar.gz") 
 }
 
 func main() {
