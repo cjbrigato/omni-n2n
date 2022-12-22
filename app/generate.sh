@@ -2,6 +2,7 @@
 
 COMMU="$1"
 ARCH="$2"
+MODE="$3"
 
 case $ARCH in
   x86_64 | aarch64 | ``)
@@ -49,9 +50,22 @@ banner ()
 echo "printf '%s' 'IF8gICAgICAgICAgIF8gICAgICAgICAgICAgIF8KKF8pXyBfXyAgX19ffCB8XyBfXyBfIF8gX18gfCB8X19fICAgX19fIF9fICBfIF9fCnwgfCAnXyBcLyBfX3wgX18vIF9gIHwgJ18gXHwgX19cIFwgLyAvICdfIFx8ICdfIFwKfCB8IHwgfCBcX18gXCB8fCAoX3wgfCB8IHwgfCB8XyBcIFYgL3wgfF8pIHwgfCB8IHwKfF98X3wgfF98X19fL1xfX1xfXyxffF98IHxffFxfX3wgXF8vIHwgLl9fL3xffCB8X3wuaW8KICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIHxffCcK'|base64 -d"
 }
 
+eouid () {
+cat << 'EOUID'
+uid=$(id -u)
+if [ $uid -gt 0 ];then
+echo "Fatal: this script must run as root"
+exit 1
+fi
+EOUID
+}
+
+
 generate () {
 cat << EOS
 #!/bin/bash
+
+$(eouid)
 
 function ctrl_c() {
 		reset
