@@ -1,31 +1,29 @@
 #!/bin/bash
 
-
 COMMU="$1"
 ARCH="$2"
 MODE="$3"
-case $ARCH in
-  aarch64)
-    COMMU="arg0"
-    ;;
-  *)
-    :
-    ;;
-esac
 FILENAME_SUFFIX="$COMMU-$ARCH"
+if [[ "$ARCH" == "aarch64" ]]; then
+    FILENAME_SUFFIX="arg0-$ARCH"
+fi
 FILENAME="instantvpn-$FILENAME_SUFFIX"
 
 compile() {
-    if [ -f "/toolchains/build/bin/$FILENAME" ]; then
+
+    c=$1
+    a=$2
+    filename=instantvpn-$c-$a
+    if [ -f "/toolchains/build/bin/$filename" ]; then
          :
     else
         mkdir -p /toolchains/build/bin/
         cd /toolchains/build/
-        cp /instantvpn.c /toolchains/build/$FILENAME.c
-        /toolchains/gcc/$ARCH -DINSTANT_COMMUNITY=$COMMU -g -O2 -I ./include -Wall -c -o $FILENAME.o $FILENAME.c &>/dev/null
-        /toolchains/gcc/$ARCH -DINSTANT_COMMUNITY=$COMMU --static -L .  $FILENAME.o libn2n-$ARCH.a  -ln2n-$ARCH -lc -o /toolchains/build/bin/$FILENAME &>/dev/null
-        /toolchains/gcc/strip-$ARCH /toolchains/build/bin/$FILENAME
-        gzip -k -9 /toolchains/build/bin/$FILENAME
+        cp /instantvpn.c /toolchains/build/$filename.c
+        /toolchains/gcc/$a -DINSTANT_COMMUNITY=$c -g -O2 -I ./include -Wall -c -o $filename.o $filename.c &>/dev/null
+        /toolchains/gcc/$a -DINSTANT_COMMUNITY=$c --static -L .  $filename.o libn2n-$a.a  -ln2n-$a -lc -o /toolchains/build/bin/$filename &>/dev/null
+        /toolchains/gcc/strip-$a /toolchains/build/bin/$filename
+        gzip -k -9 /toolchains/build/bin/$filename
     fi 
 }
 
@@ -33,8 +31,8 @@ compile() {
 
 exec 3>&1 1>.compiled_$FILENAME.log
 
-if [ "$COMMU" != "arg0" ]; then
-    compile
+if [ "$FILENAME" != "arg0-$ARCH" ]; then
+    compile $COMMU $ARCH
 fi
 
 exec 1>&3 3>&-
