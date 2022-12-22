@@ -4,18 +4,6 @@ set -e
 apk add --no-cache gcc make autoconf automake bash vim file musl-dev musl-utils linux-headers wget busybox
 mkdir -p /cache
 
-if [ "$1" != "refresh" ]
-then
-if wget "https://instantvpncacher-3p5yay54aq-ew.a.run.app/toolchains.tar.gz" -O /toolchains.tar.gz
-then 
-    echo "Using cache"
-    tar -xvf /toolchains.tar.gz -C /
-    rm /go.mod /go.sum /main.go
-    rm /prepare.sh
-    exit 0
-fi
-fi 
-
 echo "Refreshing cache..."
 
 #################
@@ -92,8 +80,6 @@ cd /
 tar -cvzf toolchains.tar.gz toolchains/
 mv toolchains.tar.gz /cache/
 
-rm /go.mod /go.sum /main.go
-rm /prepare.sh
 
 
 
