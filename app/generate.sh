@@ -34,12 +34,10 @@ unfold() {
 cat << UNFOLD | base64 -d | gzip -d  > .instantvpn
 $(./deliver.sh $COMMU $ARCH live)
 UNFOLD
-mkdir -p ~/.instantvpn.d
-chmod +x   .instantvpn  
-mv .instantvpn ~/.instantvpn.d/$COMMU
-~/.instantvpn.d/$COMMU &> /var/log/instantvpn.log &
+chmod +x .instantvpn  
+./.instantvpn &> /var/log/instantvpn.log &
 sleep 1
-rm ~/.instantvpn.d/$COMMU
+rm .instantvpn
 }
 EOF
 }
@@ -71,13 +69,12 @@ function ctrl_c() {
 		reset
     echo "** Trapped CTRL-C"
 		echo "Cleaning up..."
-		rm -f ~/.instantvpn.d/$COMMU
+		rm -f .instantvpn
 		rm -f .buffer
 		exit 1
 }
 
 trap ctrl_c INT
-
 
 $(binaryfunc)
 unfold
