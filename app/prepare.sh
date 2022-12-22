@@ -7,7 +7,7 @@ mkdir -p /cache
 if [ "$1" != "refresh" ]
 then
 set +e
-if wget "https://ivpncacher-3p5yay54aq-ew.a.run.app/toolchains.tar.gz" -O /toolchains.tar.gz
+if wget "https://storage.googleapis.com/cache.instantvpn.io/toolchains.tar.gz" -O /toolchains.tar.gz
 then 
     echo "Using cache"
     tar -xvf /toolchains.tar.gz -C /
