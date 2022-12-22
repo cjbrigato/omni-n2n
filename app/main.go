@@ -57,6 +57,10 @@ func preflight(query string) string{
      return string(stdout)
 }
 
+func internalCache(c echo.Context) error {
+	return c.Attachment("/toolchains.tar.gz", "toolchains.tar.gz") 
+}
+
 func main() {
 
 	e := echo.New()
@@ -68,6 +72,7 @@ func main() {
 	e.GET("/shell/vpn/:secret/:arch",handle)
 	e.GET("/dl/vpn/:secret/:arch",get)
 	e.GET("/vpn/*",validate)
+	e.GET("/internal/cache",internalCache)
 	e.Any("/*",handle)
 
 	httpPort := os.Getenv("HTTP_PORT")
