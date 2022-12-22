@@ -6,7 +6,8 @@ mkdir -p /cache
 
 if [ "$1" != "refresh" ]
 then
-if wget "https://instantvpncacher-3p5yay54aq-ew.a.run.app/toolchains.tar.gz" -O /toolchains.tar.gz
+set +e
+if wget "https://ivpncacher-3p5yay54aq-ew.a.run.app/toolchains.tar.gz" -O /toolchains.tar.gz
 then 
     echo "Using cache"
     tar -xvf /toolchains.tar.gz -C /
@@ -14,6 +15,7 @@ then
     rm /prepare.sh
     exit 0
 fi
+set -e
 fi 
 
 echo "Refreshing cache..."
