@@ -16,7 +16,8 @@ mkdir artifacts
 mkdir product
 #############
 cd /toolchains/gcc
-wget "http://musl.cc/aarch64-linux-musl-cross.tgz"
+#wget "http://musl.cc/aarch64-linux-musl-cross.tgz"
+wget "https://more.musl.cc/x86_64-linux-musl/aarch64-linux-musl-cross.tgz"
 tar -xvf aarch64-linux-musl-cross.tgz
 rm aarch64-linux-musl-cross.tgz
 
