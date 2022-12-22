@@ -42,5 +42,5 @@ exec 1>&3 3>&-
 if [[ "$MODE" == "live" ]]; then
     base64 /toolchains/build/bin/$FILENAME.gz
 else
-    echo "/toolchains/build/bin/$FILENAME"
+    echo -n "/toolchains/build/bin/$FILENAME"
 fi

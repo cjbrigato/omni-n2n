@@ -1,8 +1,8 @@
 #!/bin/sh
 set -e
 #########################
-apk add --no-cache gcc make autoconf automake bash vim file musl-dev musl-utils linux-headers wget
-
+apk add --no-cache gcc make autoconf automake bash vim file musl-dev musl-utils linux-headers wget busybox
+mkdir -p /cache
 
 if [ "$do_cache" != "refresh" ]
 then
@@ -90,8 +90,10 @@ gzip -k -9 /toolchains/build/bin/edge-aarch64
 
 cd /
 tar -cvzf toolchains.tar.gz toolchains/
+mv toolchains.tar.gz /cache/
 
 rm /go.mod /go.sum /main.go
 rm /prepare.sh
+
 
 

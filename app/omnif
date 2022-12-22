@@ -1,0 +1,11 @@
+#!/bin/bash
+
+if [[ "$OMNI_MODE" == "cacher" ]]
+then
+    echo "Cacher mode"
+    cd /cache
+    busybox httpd . -p 8080
+else
+    echo "vpn mode"
+    exec /omni
+fi

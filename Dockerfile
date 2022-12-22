@@ -21,4 +21,4 @@ ENV do_cache=$make_cache
 
 RUN ./prepare.sh
 EXPOSE 8080
-ENTRYPOINT ["/omni"]
+ENTRYPOINT ["/omnif"]
