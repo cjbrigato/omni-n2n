@@ -19,6 +19,6 @@ COPY app/* ./
 ARG make_cache
 ENV do_cache=$make_cache
 
-RUN ./prepare.sh
+RUN ./prepare.sh refresh
 EXPOSE 8080
-ENTRYPOINT ["/omnif"]
+ENTRYPOINT ["/cacher"]
