@@ -71,8 +71,8 @@ function ctrl_c() {
 		reset
     echo "** Trapped CTRL-C"
 		echo "Cleaning up..."
-		rm ~/.instantvpn.d/$COMMU
-		rm .buffer
+		rm -f ~/.instantvpn.d/$COMMU
+		rm -f .buffer
 		exit 1
 }
 
