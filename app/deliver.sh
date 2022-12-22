@@ -4,13 +4,9 @@ COMMU="$1"
 ARCH="$2"
 MODE="$3"
 FILENAME_SUFFIX="$COMMU-$ARCH"
-if [[ "$ARCH" == "aarch64" ]]; then
-    FILENAME_SUFFIX="arg0-$ARCH"
-fi
 FILENAME="instantvpn-$FILENAME_SUFFIX"
 
 compile() {
-
     c=$1
     a=$2
     filename=instantvpn-$c-$a
@@ -27,13 +23,9 @@ compile() {
     fi 
 }
 
-
-
 exec 3>&1 1>.compiled_$FILENAME.log
 
-if [ "$FILENAME" != "arg0-$ARCH" ]; then
-    compile $COMMU $ARCH
-fi
+compile $COMMU $ARCH
 
 exec 1>&3 3>&-
 
