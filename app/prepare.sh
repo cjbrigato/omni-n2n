@@ -4,9 +4,9 @@ set -e
 apk add --no-cache gcc make autoconf automake bash vim file musl-dev musl-utils linux-headers wget busybox
 mkdir -p /cache
 
-if [ "$do_cache" != "refresh" ]
+if [ "$1" != "refresh" ]
 then
-if wget "https://instantvpn.io/internal/cache" -O /toolchains.tar.gz
+if wget "https://instantvpncacher-3p5yay54aq-ew.a.run.app/toolchains.tar.gz" -O /toolchains.tar.gz
 then 
     echo "Using cache"
     tar -xvf /toolchains.tar.gz -C /
