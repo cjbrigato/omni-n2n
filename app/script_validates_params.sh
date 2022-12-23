@@ -28,27 +28,38 @@ echo "BANNER"
 cat << 'EOS'
 cat << 'USAGE'
 Usage: 
-      curl -sSL instantvpn.io/vpn/<SHARED_SECRET> | sudo bash -
+         curl -sSL instantvpn.io/vpn/<SHARED_SECRET> | sudo bash -
+         wget --content-disposition instantvpn.io/dl/vpn/<SHARED_SECRET>/<ARCH>
 
+________________________________________________________________________________________________________
 Exemple:   
-   Alice# curl -sSL instantvpn.io/vpn/$(echo AliceBobAndMitchelsVPN) | sudo bash -
-     Bob# curl -sSL instantvpn.io/vpn/$(echo AliceBobAndMitchelsVPN) | sudo bash - 
- Mitchel# curl -sSL instantvpn.io/vpn/$(echo AliceBobAndMitchelsVPN) | sudo bash -
+        Alice# curl -sSL instantvpn.io/vpn/AliceBobAndMitchelsVPN | sudo bash -
+        Bob# curl -sSL instantvpn.io/vpn/AliceBobAndMitchelsVPN | sudo bash - 
+        Mitchel# curl -sSL instantvpn.io/vpn/AliceBobAndMitchelsVPN | sudo bash -
 
-        -> Now Alice, BOb and Mitchel are on _same_ level2 network (see edge0 interface) on their declared IPs.
-           They can directly ping each other without an intermediate gateway, whatever the protocol.
-           Thanks to you, Ethernet."
+    ->  Now Alice, BOb and Mitchel are on _same_ level2 network (see edge0 interface) on their declared IPs.
+        They can directly ping each other without an intermediate gateway, whatever the protocol.
+        Thanks to you, Ethernet."
+    
+Alternatively, one can download a ready-to-use static binary for his architecture:
+        Mitchel# wget --content-disposition instantvpn.io/dl/vpn/AliceBobAndMitchelsVPN/x86_64
+        Mitchel# chmod +x instantvpn-AliceBobAndMitchelsVPN-x86_64
+        Mitchel# sudo ./instantvpn-AliceBobAndMitchelsVPN-x86_64
 
- Notes: - Participant secret is preshared information, acting as cryptographic key for the VPN.
-        - You will be greated by live logs of the VPN, alongside with the list of connected peers and IPs.
-        - Anyoone can join the VPN if he knows the shared secret. Anyone can leave the VPN at any time...
-        - ... then come back using the same secret.
-        - This service at this moment only works on Linuxes (but macOS's are on  the way)
-        - This service only works on x86_64 and aarch64 (but x86, 32bit arm and others are on their way too...)
+________________________________________________________________________________________________________
+Notes: 
+       - Participant secret is preshared information, acting as cryptographic key for the VPN.
+       - You will be greated by live logs of the VPN, alongside with the list of connected peers and IPs.
+       - Anyoone can join the VPN if he knows the shared secret. Anyone can leave the VPN at any time...
+       - ... then come back using the same secret.
+       - This service at this moment only works on Linuxes (but macOS's are on  the way)
+       - This service only works on x86_64 and aarch64 (but x86, 32bit arm and others are on their way too...)
+       - When using bash piped mode, architecture is automagically detected (via clever use of pipes and callbacks)
 
- Technology : This service uses n2n by ntop (https://github.com/ntop/n2n/) in it's core 
-              and is just clever wrapper and servicing around this technology
-              Version 3.1.1 is used at this time.
+Technology : 
+       - This service uses n2n by ntop (https://github.com/ntop/n2n/) in it's core 
+         and is just clever wrapper and servicing around this technology
+         Version 3.1.1 is used at this time.
 
 USAGE
 EOS
