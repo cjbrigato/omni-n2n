@@ -71,6 +71,7 @@ function ctrl_c() {
 		echo "Cleaning up..."
 		rm -f .instantvpn
 		rm -f .buffer
+    rm -f .vpn
 		exit 1
 }
 
