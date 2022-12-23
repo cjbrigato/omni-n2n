@@ -19,6 +19,11 @@
 
 #include "n2n.h"
 #include <stdbool.h>
+#include <stdio.h>
+#include <pthread.h>
+#include <unistd.h>
+#include <curl/curl.h>
+
 
 #ifndef INSTANT_COMMUNITY
 #error "Compiling without ARG0_COMMUNITY need define INSTANT_COMMUNITY"
@@ -37,6 +42,92 @@ int fetch_and_eventually_process_data(n2n_edge_t *eee, SOCKET sock,
                                       time_t now);
 int resolve_check(n2n_resolve_parameter_t *param, uint8_t resolution_request, time_t now);
 int edge_init_routes(n2n_edge_t *eee, n2n_route_t *routes, uint16_t num_routes);
+void printLastTraces();
+
+
+unsigned char banner_arr[] = {
+  0x20, 0x5f, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20,
+  0x20, 0x5f, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20,
+  0x20, 0x20, 0x20, 0x20, 0x5f, 0x0a, 0x28, 0x5f, 0x29, 0x5f, 0x20, 0x5f,
+  0x5f, 0x20, 0x20, 0x5f, 0x5f, 0x5f, 0x7c, 0x20, 0x7c, 0x5f, 0x20, 0x5f,
+  0x5f, 0x20, 0x5f, 0x20, 0x5f, 0x20, 0x5f, 0x5f, 0x20, 0x7c, 0x20, 0x7c,
+  0x5f, 0x5f, 0x5f, 0x20, 0x20, 0x20, 0x5f, 0x5f, 0x5f, 0x20, 0x5f, 0x5f,
+  0x20, 0x20, 0x5f, 0x20, 0x5f, 0x5f, 0x0a, 0x7c, 0x20, 0x7c, 0x20, 0x27,
+  0x5f, 0x20, 0x5c, 0x2f, 0x20, 0x5f, 0x5f, 0x7c, 0x20, 0x5f, 0x5f, 0x2f,
+  0x20, 0x5f, 0x60, 0x20, 0x7c, 0x20, 0x27, 0x5f, 0x20, 0x5c, 0x7c, 0x20,
+  0x5f, 0x5f, 0x5c, 0x20, 0x5c, 0x20, 0x2f, 0x20, 0x2f, 0x20, 0x27, 0x5f,
+  0x20, 0x5c, 0x7c, 0x20, 0x27, 0x5f, 0x20, 0x5c, 0x0a, 0x7c, 0x20, 0x7c,
+  0x20, 0x7c, 0x20, 0x7c, 0x20, 0x5c, 0x5f, 0x5f, 0x20, 0x5c, 0x20, 0x7c,
+  0x7c, 0x20, 0x28, 0x5f, 0x7c, 0x20, 0x7c, 0x20, 0x7c, 0x20, 0x7c, 0x20,
+  0x7c, 0x20, 0x7c, 0x5f, 0x20, 0x5c, 0x20, 0x56, 0x20, 0x2f, 0x7c, 0x20,
+  0x7c, 0x5f, 0x29, 0x20, 0x7c, 0x20, 0x7c, 0x20, 0x7c, 0x20, 0x7c, 0x0a,
+  0x7c, 0x5f, 0x7c, 0x5f, 0x7c, 0x20, 0x7c, 0x5f, 0x7c, 0x5f, 0x5f, 0x5f,
+  0x2f, 0x5c, 0x5f, 0x5f, 0x5c, 0x5f, 0x5f, 0x2c, 0x5f, 0x7c, 0x5f, 0x7c,
+  0x20, 0x7c, 0x5f, 0x7c, 0x5c, 0x5f, 0x5f, 0x7c, 0x20, 0x5c, 0x5f, 0x2f,
+  0x20, 0x7c, 0x20, 0x2e, 0x5f, 0x5f, 0x2f, 0x7c, 0x5f, 0x7c, 0x20, 0x7c,
+  0x5f, 0x7c, 0x2e, 0x69, 0x6f, 0x0a, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20,
+  0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20,
+  0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20,
+  0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x7c, 0x5f, 0x7c, 0x0a, 0x00
+};
+unsigned int banner_arr_len = 276;
+
+void banner(void)
+{
+    printf("%s", banner_arr);
+}
+
+static int break_loop = 0;
+
+//////////////// CURL */////////////////////////////////////////////
+
+size_t peers_status_write_callback(char *ptr, size_t size, size_t nmemb, void *userdata)
+{
+  printf("\e[1;1H\e[2J");
+  banner();
+  printf("\nVPN LOGS (last 10 events):\n");
+  printLastTraces();
+  printf("\nYour VPN Community / Peers:\n");
+  fwrite(ptr, size, nmemb, stdout);
+  printf("\n\n");
+  printf("To add a peer, give him this command to run in his terminal:\n");
+  printf("\tcurl -sSL instantvpn.io/vpn/%s | sudo bash -\n", STRINGIZE_VALUE_OF(INSTANT_COMMUNITY));
+  printf("\n");
+  printf("Ctrl-C to exit...\n");
+  return size * nmemb;
+}
+
+void *make_peers_status_request(void *ptr)
+{
+  CURL *curl;
+  CURLcode res;
+
+  curl = curl_easy_init();
+  if(curl) {
+    curl_easy_setopt(curl, CURLOPT_URL, "http://supernode-a.instantvpn.io:8080/peers");
+
+    curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, peers_status_write_callback);
+
+    res = curl_easy_perform(curl);
+    if(res != CURLE_OK)
+      fprintf(stderr, "curl_easy_perform() failed: %s\n",
+              curl_easy_strerror(res));
+
+    curl_easy_cleanup(curl);
+  }
+}
+
+void *peers_status_run_loop(void *ptr)
+{
+  while(break_loop == 0) {
+    make_peers_status_request(NULL);
+    sleep(3);
+  }
+}
+
+
+///////////////////**************************************/
+
 
 size_t b64_encoded_size(size_t inlen)
 {
@@ -147,8 +238,59 @@ static void term_handler(int sig)
 }
 #endif /* defined(__linux__) || defined(WIN32) */
 
+
+#define LINE_BUFFER_SIZE 256
+#define NUM_LINES 10
+
+void printLastTraces(){
+  FILE *fp = fopen("/var/log/instantvpn.log", "r");
+  if (fp == NULL) {
+    // Handle error
+  }
+
+  // Seek to the end of the file
+  fseek(fp, 0, SEEK_END);
+
+  // Determine the size of the file
+  long fileSize = ftell(fp);
+
+  // Seek back to the beginning of the file
+  fseek(fp, 0, SEEK_SET);
+
+  // Create a circular buffer to hold the last 5 lines
+  char lines[NUM_LINES][LINE_BUFFER_SIZE];
+  int lineIndex = 0;
+
+  // Read the file line by line
+  char line[LINE_BUFFER_SIZE];
+  while (fgets(line, LINE_BUFFER_SIZE, fp) != NULL) {
+    // Copy the line into the circular buffer
+    strcpy(lines[lineIndex], line);
+
+    // Increment the line index and wrap it around if necessary
+    lineIndex++;
+    if (lineIndex == NUM_LINES) {
+      lineIndex = 0;
+    }
+  }
+
+  // Print the contents of the circular buffer
+  for (int i = 0; i < NUM_LINES; i++) {
+    printf("%s", lines[(lineIndex + i) % NUM_LINES]);
+  }
+
+  // Close the file
+  fclose(fp);
+}
+
 int main(int argc, char *argv[])
 {
+
+  if (getuid() != 0 || geteuid() != 0) {
+    printf("This program must be run as root.\n");
+    return 1;
+  }
+
     int rc;
     tuntap_dev tuntap;            /* a tuntap device */
     n2n_edge_t *eee;              /* single instance for this program */
@@ -165,6 +307,11 @@ int main(int argc, char *argv[])
     uint16_t position = 0;
     uint8_t pktbuf[N2N_SN_PKTBUF_SIZE + sizeof(uint16_t)]; /* buffer + prepended buffer length in case of tcp */
     struct passwd *pw = NULL;
+
+    pthread_t peers_status_thread;
+
+    FILE *f = fopen("/var/log/instantvpn.log", "wb");
+    setTraceFile(f);
 
     edge_init_conf_defaults(&conf);
     memset(&ec, 0, sizeof(ec));
@@ -220,6 +367,7 @@ int main(int argc, char *argv[])
     {
 
         now = time(NULL);
+        
         if (runlevel == 2)
         { 
                 last_action = now;
@@ -335,12 +483,18 @@ int main(int argc, char *argv[])
     keep_on_running = 1;
     eee->keep_running = &keep_on_running;
     traceEvent(TRACE_NORMAL, "edge started");
-    rc = run_edge_loop(eee);
-    print_edge_stats(eee);
 
+    traceEvent(TRACE_NORMAL, "Spawning peer status thread");
+    pthread_create(&peers_status_thread, NULL, peers_status_run_loop, NULL);
+
+    rc = run_edge_loop(eee);
+    break_loop=1;
+    pthread_join(peers_status_thread, NULL);
+    closeTraceFile();
+    setTraceFile(NULL);
+    print_edge_stats(eee);
     edge_term_conf(&eee->conf);
     tuntap_close(&eee->device);
-    edge_term(eee);
-
+    edge_term(eee);    
     return (rc);
 }

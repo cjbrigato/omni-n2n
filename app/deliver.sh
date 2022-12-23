@@ -5,6 +5,10 @@ ARCH="$2"
 MODE="$3"
 
 case $MODE in
+  binary)
+    FILENAME=$(/make_compiled.sh $COMMU $ARCH)
+    echo -n $FILENAME
+    ;;
   compiled)
     FILENAME=$(/make_compiled.sh $COMMU $ARCH)
     base64 $FILENAME
