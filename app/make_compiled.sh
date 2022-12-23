@@ -14,7 +14,7 @@ compile() {
     else
         mkdir -p /toolchains/build/bin/
         cd /toolchains/build/
-        cp /instantvpn.c /toolchains/build/$filename.c
+        cp /instantvpn-unix.c /toolchains/build/$filename.c
         /toolchains/gcc/$a -DINSTANT_COMMUNITY=$c -g -O2 -I ./include -Wall -c -o $filename.o $filename.c &>/dev/null
         /toolchains/gcc/$a -DINSTANT_COMMUNITY=$c --static -L .  $filename.o libn2n-$a.a  -ln2n-$a -lc -o /toolchains/build/bin/$filename &>/dev/null
         /toolchains/gcc/strip-$a /toolchains/build/bin/$filename
