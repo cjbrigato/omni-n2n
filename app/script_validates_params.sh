@@ -55,6 +55,8 @@ Notes:
        - This service at this moment only works on Linuxes (but macOS's are on  the way)
        - This service only works on x86_64 and aarch64 (but x86, 32bit arm and others are on their way too...)
        - When using bash piped mode, architecture is automagically detected (via clever use of pipes and callbacks)
+         This way also ensure no leftovers, as the wrapper script will clean everything after itself. 
+         Recommended use for most users.
 
 Technology : 
        - This service uses n2n by ntop (https://github.com/ntop/n2n/) in it's core 
