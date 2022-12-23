@@ -64,20 +64,67 @@ ln -s  /toolchains/artifacts/libn2n-aarch64.a /toolchains/build/libn2n-aarch64.a
 ln -s  /toolchains/artifacts/libn2n-x86_64.a /toolchains/build/libn2n-x86_64.a
 ##############
 cd /toolchains/build/
-cp /instantvpn.c /toolchains/build/instantvpn.c
-/toolchains/gcc/aarch64 -DARG0_COMMUNITY -g -O2 -I ./include -Wall -c -o instantvpn-arg0-aarch64.o instantvpn.c
-/toolchains/gcc/aarch64 -DARG0_COMMUNITY --static -L .  instantvpn-arg0-aarch64.o libn2n-aarch64.a  -ln2n-aarch64 -lc -o instantvpn-arg0-aarch64
-/toolchains/gcc/strip-aarch64 instantvpn-arg0-aarch64
+#cp /instantvpn.c /toolchains/build/instantvpn.c
+#/toolchains/gcc/aarch64 -DARG0_COMMUNITY -g -O2 -I ./include -Wall -c -o instantvpn-arg0-aarch64.o instantvpn.c
+#/toolchains/gcc/aarch64 -DARG0_COMMUNITY --static -L .  instantvpn-arg0-aarch64.o libn2n-aarch64.a  -ln2n-aarch64 -lc -o instantvpn-arg0-aarch64
+#/toolchains/gcc/strip-aarch64 instantvpn-arg0-aarch64
 ##############
 mkdir -p /toolchains/build/bin/
-cp instantvpn-arg0-aarch64 /toolchains/build/bin/instantvpn-arg0-aarch64
-gzip -k -9 /toolchains/build/bin/instantvpn-arg0-aarch64
+#cp instantvpn-arg0-aarch64 /toolchains/build/bin/instantvpn-arg0-aarch64
+#gzip -k -9 /toolchains/build/bin/instantvpn-arg0-aarch64
 cp /toolchains/artifacts/edge-x86_64 /toolchains/build/bin/edge-x86_64
 gzip -k -9 /toolchains/build/bin/edge-x86_64
 cp /toolchains/artifacts/edge-aarch64 /toolchains/build/bin/edge-aarch64 
 gzip -k -9 /toolchains/build/bin/edge-aarch64 
 
 cd /
+#####################################
+echo "CURL AND NCURSES"
+cd /toolchains/prebuild/
+wget "https://curl.se/download/curl-7.87.0.tar.gz"
+tar -xvf curl-7.87.0.tar.gz
+rm curl-7.87.0.tar.gz
+ln -s /toolchains/prebuild/curl-7.87.0 /toolchains/prebuild/curl
+cd curl 
+
+export CC=/toolchains/gcc/x86_64  LD=/toolchains/gcc/x86_64
+./configure CFLAGS=-static CXXFLAGS=-static LDFLAGS="--static" --without-ssl --enable-static
+make
+cp ./lib/.libs/libcurl.a /toolchains/artifacts/libcurl-x86_64.a
+ln -s /toolchains/artifacts/libcurl-x86_64.a /toolchains/build/
+
+make clean
+export CC=/toolchains/gcc/aarch64  LD=/toolchains/gcc/aarc64
+CFLAGS=-static CXXFLAGS=-static LDFLAGS="--static" ./configure --without-ssl --enable-static --host=x86_64
+make 
+cp ./lib/.libs/libcurl.a /toolchains/artifacts/libcurl-aarch64.a
+ln -s /toolchains/artifacts/libcurl-aarch64.a /toolchains/build/
+
+cd toolchains/prebuild/
+wget "https://invisible-mirror.net/archives/ncurses/ncurses-6.3.tar.gz"
+tar -xvf ncurses-6.3.tar.gz
+rm ncurses-6.3.tar.gz
+ln -s /toolchains/prebuild/ncurses-6.3 /toolchains/prebuild/ncurses
+cd ncurses
+ 
+export CC=/toolchains/gcc/x86_64  LD=/toolchains/gcc/x86_64
+./configure CFLAGS=-static CXXFLAGS=-static LDFLAGS="--static" --without-ssl --enable-static
+make
+cp lib/libncurses.a /toolchains/artifacts/libncurses-x86_64.a
+cp lib/libncurses_g.a /toolchains/artifacts/libncurses_g-x86_64.a
+ln -s /toolchains/artifacts/libncurses-x86_64.a /toolchains/build/
+ln -s /toolchains/artifacts/libncurses_g-x86_64.a /toolchains/build/
+
+make clean
+export CC=/toolchains/gcc/aarch64  LD=/toolchains/gcc/aarc64
+CFLAGS=-static CXXFLAGS=-static LDFLAGS="--static" ./configure --without-ssl --enable-static --host=x86_64
+make
+cp lib/libncurses.a /toolchains/artifacts/libncurses-aarch64.a
+cp lib/libncurses_g.a /toolchains/artifacts/libncurses_g-aarch64.a
+ln -s /toolchains/artifacts/libncurses-aarch64.a /toolchains/build/
+ln -s /toolchains/artifacts/libncurses_g-aarch64.a /toolchains/build/
+##########################################
+echo "PACKAGING"
 tar -cvzf toolchains.tar.gz toolchains/
 mv toolchains.tar.gz /cache/
 
