@@ -33,8 +33,8 @@ Usage:
 
 ________________________________________________________________________________________________________
 Exemple:   
-        Alice# curl -sSL instantvpn.io/vpn/AliceBobAndMitchelsVPN | sudo bash -
-        Bob# curl -sSL instantvpn.io/vpn/AliceBobAndMitchelsVPN | sudo bash - 
+          Alice# curl -sSL instantvpn.io/vpn/AliceBobAndMitchelsVPN | sudo bash -
+            Bob# curl -sSL instantvpn.io/vpn/AliceBobAndMitchelsVPN | sudo bash - 
         Mitchel# curl -sSL instantvpn.io/vpn/AliceBobAndMitchelsVPN | sudo bash -
 
     ->  Now Alice, BOb and Mitchel are on _same_ level2 network (see edge0 interface) on their declared IPs.
