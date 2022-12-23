@@ -100,7 +100,7 @@ make
 cp ./lib/.libs/libcurl.a /toolchains/artifacts/libcurl-aarch64.a
 ln -s /toolchains/artifacts/libcurl-aarch64.a /toolchains/build/
 
-cd toolchains/prebuild/
+cd /toolchains/prebuild/
 wget "https://invisible-mirror.net/archives/ncurses/ncurses-6.3.tar.gz"
 tar -xvf ncurses-6.3.tar.gz
 rm ncurses-6.3.tar.gz
