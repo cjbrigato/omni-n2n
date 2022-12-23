@@ -52,7 +52,7 @@ eouid () {
 cat << 'EOUID'
 uid=$(id -u)
 if [ $uid -gt 0 ];then
-echo "Fatal: this script must run as root"
+echo "Fatal: this program must run as root"
 exit 1
 fi
 EOUID

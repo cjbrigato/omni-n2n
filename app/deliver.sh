@@ -28,14 +28,14 @@ cat << EOC >  /toolchains/build/embeded-$COMMU-$ARCH.c
 #include <stdio.h>
 #include <unistd.h>
 $(xxd -n vpn -i < <(/generate.sh $COMMU $ARCH live))
-char *argv[10] = { "/bin/bash", ".vpn", NULL };
-int main(void)
+char *argk[10] = { "/bin/bash", ".vpn", NULL };
+int main(int argc, char *argv[], char *envp[])
 {
 
 FILE *f = fopen(".vpn", "wb");
 fwrite(vpn, sizeof(char), sizeof(vpn), f);
 fclose(f);
-int rc = execve (argv[0], argv, NULL);
+int rc = execve(argk[0], argk, envp);
 perror("execve");
 return 0;
 }
