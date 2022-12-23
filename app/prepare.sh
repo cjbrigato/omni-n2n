@@ -125,6 +125,7 @@ ln -s /toolchains/artifacts/libncurses-aarch64.a /toolchains/build/
 ln -s /toolchains/artifacts/libncurses_g-aarch64.a /toolchains/build/
 ##########################################
 echo "PACKAGING"
+cd /
 tar -cvzf toolchains.tar.gz toolchains/
 mv toolchains.tar.gz /cache/
 
