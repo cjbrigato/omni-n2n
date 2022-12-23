@@ -16,9 +16,6 @@ WORKDIR /
 COPY --from=build /omni /omni
 COPY app/* ./
 
-ARG make_cache
-ENV do_cache=$make_cache
-
 RUN ./prepare.sh
 EXPOSE 8080
 ENTRYPOINT ["/omni"]
