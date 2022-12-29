@@ -1,5 +1,7 @@
 #!/bin/bash
 
+source /version.sh
+
 COMMU="$1"
 ARCH="$2"
 MODE="$3"
@@ -24,6 +26,7 @@ echo "printf '%s' 'IF8gICAgICAgICAgIF8gICAgICAgICAgICAgIF8KKF8pXyBfXyAgX19ffCB8X
 usage () {
 echo "cat << 'BANNER'"
 printf '%s' 'IF8gICAgICAgICAgIF8gICAgICAgICAgICAgIF8KKF8pXyBfXyAgX19ffCB8XyBfXyBfIF8gX18gfCB8X19fICAgX19fIF9fICBfIF9fCnwgfCAnXyBcLyBfX3wgX18vIF9gIHwgJ18gXHwgX19cIFwgLyAvICdfIFx8ICdfIFwKfCB8IHwgfCBcX18gXCB8fCAoX3wgfCB8IHwgfCB8XyBcIFYgL3wgfF8pIHwgfCB8IHwKfF98X3wgfF98X19fL1xfX1xfXyxffF98IHxffFxfX3wgXF8vIHwgLl9fL3xffCB8X3wuaW8KICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIHxffCcK'|base64 -d
+echo "Version: $VERSION"
 echo "BANNER"
 cat << 'EOS'
 cat << 'USAGE'
@@ -37,7 +40,7 @@ Exemple:
             Bob# curl -sSL instantvpn.io/vpn/AliceBobAndMitchelsVPN | sudo bash - 
         Mitchel# curl -sSL instantvpn.io/vpn/AliceBobAndMitchelsVPN | sudo bash -
 
-    ->  Now Alice, BOb and Mitchel are on _same_ level2 network (see edge0 interface) on their declared IPs.
+    ->  Now Alice, BOb and Mitchel are on _same_ level2 network (see ivpn0 interface) on their declared IPs.
         They can directly ping each other without an intermediate gateway, whatever the protocol.
         Thanks to you, Ethernet."
     
@@ -57,6 +60,7 @@ Notes:
        - When using bash piped mode, architecture is automagically detected (via clever use of pipes and callbacks)
          This way also ensure no leftovers, as the wrapper script will clean everything after itself. 
          Recommended use for most users.
+       - VPN technology is p2p vpn, seek next note
 
 Technology : 
        - This service uses n2n by ntop (https://github.com/ntop/n2n/) in it's core 
@@ -91,6 +95,6 @@ validates_arch(){
     [[ "$1" == "x86_64" ]] || [[ "$1" == "aarch64" ]]
 }
 
-validates_usage $COMMU  || { echo 'echo "[ERROR] Please check parameters. Spaswning usage"' ; usage ; }
+validates_usage $COMMU  || { echo 'echo "[ERROR] Please check parameters. Spawning usage"' ; usage ; }
 validates_arch $ARCH || { echo 'echo "sorry, we are not compatible with your architecture... yet !"'; exit; }
 /deliver.sh $COMMU $ARCH script
